@@ -5,6 +5,8 @@ const keys: string[] = ["Enter", "Backspace"];
 
 const signs = ["+", "-", "%", "/", "*"];
 
+let next = false;
+
 buttons.forEach((button) => {
   keys.push(button.innerText);
 
@@ -29,11 +31,16 @@ buttons.forEach((button) => {
       if (screenDiv.innerText === "") return;
       const result = eval(screenDiv.innerText);
       screenDiv.innerHTML = result;
+      next = true;
+      console.log(next);
     });
     return;
   }
 
   button.addEventListener("click", () => {
+    if (next === true && !signs.includes(button.innerText)) {
+      screenDiv.innerText = "";
+    }
     const lastChar = [...screenDiv.innerText.split("")].pop();
     if (
       lastChar &&
@@ -46,6 +53,7 @@ buttons.forEach((button) => {
       return;
     }
     screenDiv.innerText += button.innerText;
+    next = false;
   });
 });
 
@@ -55,7 +63,6 @@ document.addEventListener("keydown", (event) => {
   const key = event.key;
   if (key === "AC") {
     screenDiv.innerText = "";
-    return;
   }
 
   if (key === "Backspace") {
@@ -69,14 +76,19 @@ document.addEventListener("keydown", (event) => {
     if (screenDiv.innerText === "") return;
     const result = eval(screenDiv.innerText);
     screenDiv.innerHTML = result;
+    next = true;
     return;
   }
   if (screenDiv.innerText === "0") {
     screenDiv.innerText = key;
     return;
   }
+  if (next === true && !signs.includes(key)) {
+    screenDiv.innerText = "";
+  }
   const lastChar = [...screenDiv.innerText.split("")].pop();
   if (lastChar && signs.includes(lastChar) && signs.includes(key)) return;
 
   screenDiv.innerText += key;
+  next = false;
 });

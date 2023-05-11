@@ -3,6 +3,7 @@ const buttons = document.querySelectorAll("button");
 const screenDiv = document.getElementById("calculator-screen");
 const keys = ["Enter", "Backspace"];
 const signs = ["+", "-", "%", "/", "*"];
+let next = false;
 buttons.forEach((button) => {
     keys.push(button.innerText);
     if (button.innerText === "←") {
@@ -25,10 +26,15 @@ buttons.forEach((button) => {
                 return;
             const result = eval(screenDiv.innerText);
             screenDiv.innerHTML = result;
+            next = true;
+            console.log(next);
         });
         return;
     }
     button.addEventListener("click", () => {
+        if (next === true && !signs.includes(button.innerText)) {
+            screenDiv.innerText = "";
+        }
         const lastChar = [...screenDiv.innerText.split("")].pop();
         if (lastChar &&
             signs.includes(lastChar) &&
@@ -39,6 +45,7 @@ buttons.forEach((button) => {
             return;
         }
         screenDiv.innerText += button.innerText;
+        next = false;
     });
 });
 document.addEventListener("keydown", (event) => {
@@ -47,7 +54,6 @@ document.addEventListener("keydown", (event) => {
     const key = event.key;
     if (key === "AC") {
         screenDiv.innerText = "";
-        return;
     }
     if (key === "Backspace") {
         const screenDivText = [...screenDiv.innerText.split("")];
@@ -60,14 +66,19 @@ document.addEventListener("keydown", (event) => {
             return;
         const result = eval(screenDiv.innerText);
         screenDiv.innerHTML = result;
+        next = true;
         return;
     }
     if (screenDiv.innerText === "0") {
         screenDiv.innerText = key;
         return;
     }
+    if (next === true && !signs.includes(key)) {
+        screenDiv.innerText = "";
+    }
     const lastChar = [...screenDiv.innerText.split("")].pop();
     if (lastChar && signs.includes(lastChar) && signs.includes(key))
         return;
     screenDiv.innerText += key;
+    next = false;
 });
